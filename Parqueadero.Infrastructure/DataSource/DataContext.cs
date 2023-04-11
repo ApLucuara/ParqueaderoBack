@@ -1,8 +1,5 @@
-﻿using Parqueadero.Domain.Entities;
-using Parqueadero.Infrastructure.DataSource.ModelConfig;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Reflection;
 
 namespace Parqueadero.Infrastructure.DataSource;
 
@@ -27,7 +24,8 @@ public class DataContext : DbContext
 
         // if using schema in db, uncomment the following line
         // modelBuilder.HasDefaultSchema(_config.GetValue<string>("SchemaName"));
-        modelBuilder.Entity<Voter>();
+        //prueba
+        //modelBuilder.Entity<Voter>();
         
 
         // ghost properties for audit
