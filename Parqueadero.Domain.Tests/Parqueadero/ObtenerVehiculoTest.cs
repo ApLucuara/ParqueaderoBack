@@ -29,6 +29,20 @@ namespace Parqueadero.Domain.Tests.Parqueadero
         }
 
         [Fact]
+        public async void ObtenerVehiculoPlacaVacia()
+        {
+            try
+            {
+                var resultado = await _service.ObtenerVehiculo("");
+                Assert.Fail("No deberia");
+            }
+            catch (CoreBusinessException ex)
+            {
+                Assert.True(ex.Message.Equals($"La placa no puede ser nula o vacía."));
+            }
+        }
+
+        [Fact]
         public async void ObtenerVehiculoExitoso()
         {
             try
@@ -58,12 +72,43 @@ namespace Parqueadero.Domain.Tests.Parqueadero
             }
         }
 
+        [Fact]
+        public async void ValidaNoHayParametrizacion()
+        {
+            try
+            {
+                ConfiguracionVehiculo();
+                var resultado = await _service.ObtenerVehiculo("ABC123");
+                Assert.Fail("No deberia");
+            }
+            catch (CoreBusinessException ex)
+            {
+                Assert.True(ex.Message.Equals($"No se encontro parametrización"));
+            }
+        }
+
+
+        [Fact]
+        public async void ValidaNoHayParametrizacionDeValorDia()
+        {
+            try
+            {
+                ConfiguracionParametrosConValorDiaCero();
+                ConfiguracionVehiculo();
+                var resultado = await _service.ObtenerVehiculo("ABC123");
+                Assert.Fail("No deberia");
+            }
+            catch (CoreBusinessException ex)
+            {
+                Assert.True(ex.Message.Equals($"No se encontro parametrizado el valor del día"));
+            }
+        }
+
+
         private void ConfiguracionVehiculo()
         {
-            IEnumerable<Entities.Parqueadero> ListaVehiculos = new List<Entities.Parqueadero>();
             var vehiculo = new Entities.Parqueadero(Enumerations.TipoVehiculo.Carro, "ABC123", null, new DateTime(2023, 03, 31, 12, 00, 00));
-            ((List<Entities.Parqueadero>)ListaVehiculos).Add(vehiculo);
-            _genericRepoParqueadero.GetManyAsync(Arg.Any<Expression<Func<Entities.Parqueadero, bool>>>()).Returns(Task.FromResult(ListaVehiculos));
+            _genericRepoParqueadero.GetOneAsync(Arg.Any<Expression<Func<Entities.Parqueadero, bool>>>()).Returns(Task.FromResult(vehiculo));
         }
 
         private void ConfiguracionParametros()
@@ -77,6 +122,23 @@ namespace Parqueadero.Domain.Tests.Parqueadero
             _genericRepoParametrizacion.GetManyAsync(Arg.Any<Expression<Func<Parametrizacion, bool>>>()).Returns(
                 Task.FromResult(Lista));
         }
+
+        private void ConfiguracionParametrosConValorDiaCero()
+        {
+            IEnumerable<Parametrizacion> Lista = new List<Parametrizacion>()
+            {
+                new Parametrizacion() { TipoVehiculo=TipoVehiculo.Carro,ValorHora=1000,ValorDia=0, Capacidad = 20,PicoPlacaLunes ="1,2",PicoPlacaMartes="3,4", PicoPlacaMiercoles = "5,6",PicoPlacaJueves="7,8",PicoPlacaViernes="9,0" },
+             //   new Parametrizacion() { TipoVehiculo=TipoVehiculo.Moto,ValorHora=500,Capacidad = 10, PicoPlacaLunes ="1,2,3,4",PicoPlacaMartes="5,6,7,8", PicoPlacaMiercoles = "9,0,1,2",PicoPlacaJueves="3,4,5,6",PicoPlacaViernes="7,8,9,0",CilindrajeSobrecargo=500,ValorSobrecargo=200,HorasDia=9 }
+             };
+
+            _genericRepoParametrizacion.GetManyAsync(Arg.Any<Expression<Func<Parametrizacion, bool>>>()).Returns(
+                Task.FromResult(Lista));
+        }
+
+
+
+
+
 
     }
 }

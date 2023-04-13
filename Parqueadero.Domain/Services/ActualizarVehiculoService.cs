@@ -22,10 +22,9 @@ namespace Parqueadero.Domain.Services
 
         public async Task<bool> ActualizarVehiculo(string Placa)
         {
-            var vehiculo = await _service.ObtenerVehiculo(Placa);
+            Domain.Entities.Parqueadero vehiculo = await _service.ObtenerVehiculo(Placa);
             vehiculo.Estado = Enumerations.EstadoVehiculo.Inactivo;
             _genericRepoParqueadero.UpdateAsync(vehiculo);
-            //  _unitOfWork.ParqueaderoRepository.UpdateAsync(vehiculo);
             await _unitOfWork.SaveAsync();
             return true;
         }

@@ -10,7 +10,6 @@ namespace Parqueadero.Domain.Ports
 {
     public interface IGenericRepository<T> where T : DomainEntity
     {
-        Task<T> GetOneAsync(Guid id);
         Task<IEnumerable<T>> GetManyAsync(
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
@@ -20,7 +19,9 @@ namespace Parqueadero.Domain.Ports
         void UpdateAsync(T entity);
         void DeleteAsync(T entity);
 
-        Task<List<T>> GetList();
-
+        Task<T> GetOneAsync(Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            string includeStringProperties = "",
+            bool isTracking = false);
     }
 }

@@ -44,10 +44,10 @@ namespace Parqueadero.Domain.Tests.Parqueadero
 
         private void ConfiguracionVehiculo()
         {
-            IEnumerable<Entities.Parqueadero> ListaVehiculos = new List<Entities.Parqueadero>();
+          //  IEnumerable<Entities.Parqueadero> ListaVehiculos = new List<Entities.Parqueadero>();
             var vehiculo = new Entities.Parqueadero(Enumerations.TipoVehiculo.Carro, "ABC123", null, new DateTime(2023, 04, 03, 07, 00, 00));
-            ((List<Entities.Parqueadero>)ListaVehiculos).Add(vehiculo);
-            _genericRepoParqueadero.GetManyAsync(Arg.Any<Expression<Func<Entities.Parqueadero, bool>>>()).Returns(Task.FromResult(ListaVehiculos));
+          //  ((List<Entities.Parqueadero>)ListaVehiculos).Add(vehiculo);
+            _genericRepoParqueadero.GetOneAsync(Arg.Any<Expression<Func<Entities.Parqueadero, bool>>>()).Returns(Task.FromResult(vehiculo));
         }
 
         private void ConfiguracionParametros()
