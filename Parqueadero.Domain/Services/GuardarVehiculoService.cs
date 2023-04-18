@@ -25,12 +25,13 @@ namespace Parqueadero.Domain.Services
         public async Task<Domain.Entities.Parqueadero> RecordParqueaderoAsync(Domain.Entities.Parqueadero vehiculo, CancellationToken? cancellationToken = null)
         {
             var token = cancellationToken ?? new CancellationTokenSource().Token;
-            var Param = await _genericRepoParametrizacion.GetManyAsync(para => para.TipoVehiculo == vehiculo.TipoVehiculo);
-            var ParamVeh = Param.FirstOrDefault();
 
-            await ValidaEspaciosParqueadero(vehiculo.TipoVehiculo, ParamVeh.Capacidad);
+            var parametrizacion = await _genericRepoParametrizacion.GetOneAsync(x => x.TipoVehiculo == vehiculo.TipoVehiculo);
+            if (parametrizacion == null) { throw new BussinesExceptions("No se encontro parametrización"); }
+
+            await ValidaEspaciosParqueadero(vehiculo.TipoVehiculo, parametrizacion.Capacidad);
             await ValidaExistePlaca(vehiculo.Placa);
-            ValidaPicoyPlaca(vehiculo, ParamVeh);
+            ValidaPicoyPlaca(vehiculo, parametrizacion);
 
             var returnParqueadero = await _parqueaderoRepository.SaveParqueadero(vehiculo);
             await _unitOfWork.SaveAsync(token);

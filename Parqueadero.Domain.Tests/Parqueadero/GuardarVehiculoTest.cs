@@ -127,17 +127,35 @@ namespace Parqueadero.Domain.Tests.Parqueadero
 
         }
 
+        [Fact]
+        public async Task NoEncuentraParametrizacion()
+        {
+            try
+            {
+                var vehiculo = new Entities.Parqueadero(Enumerations.TipoVehiculo.Carro, "ABC123", null, new DateTime(2023, 03, 28, 12, 00, 00));
+                _genericRepoParqueadero.AddAsync(Arg.Any<Entities.Parqueadero>()).Returns(Task.FromResult(vehiculo));
+                await _service.RecordParqueaderoAsync(vehiculo);
+                Assert.Fail("No deberia llegar");
+            }
+            catch (CoreBusinessException ex)
+            {
+                Assert.True(ex.Message.Equals($"No se encontro parametrización"));
+            }
+
+
+        }
+
 
         private void ConfiguracionParametros()
         {
-            IEnumerable<Parametrizacion> Lista = new List<Parametrizacion>()
-            {
-                new Parametrizacion() { TipoVehiculo=TipoVehiculo.Carro,ValorHora=1000,ValorDia=8000, Capacidad = 20,PicoPlacaLunes ="1,2",PicoPlacaMartes="3,4", PicoPlacaMiercoles = "5,6",PicoPlacaJueves="7,8",PicoPlacaViernes="9,0" },
-                new Parametrizacion() { TipoVehiculo=TipoVehiculo.Moto,ValorHora=500,Capacidad = 10, PicoPlacaLunes ="1,2,3,4",PicoPlacaMartes="5,6,7,8", PicoPlacaMiercoles = "9,0,1,2",PicoPlacaJueves="3,4,5,6",PicoPlacaViernes="7,8,9,0",CilindrajeSobrecargo=500,ValorSobrecargo=200,HorasDia=9 }
-             };
+            var ParamCarro = new Parametrizacion { TipoVehiculo = TipoVehiculo.Carro, ValorHora = 1000, ValorDia = 8000, Capacidad = 20, PicoPlacaLunes = "1,2", PicoPlacaMartes = "3,4", PicoPlacaMiercoles = "5,6", PicoPlacaJueves = "7,8", PicoPlacaViernes = "9,0" };
 
-            _genericRepoParametrizacion.GetManyAsync(Arg.Any<Expression<Func<Parametrizacion, bool>>>()).Returns(
-                Task.FromResult(Lista));
+            //IEnumerable<Parametrizacion> Lista = new List<Parametrizacion>()
+            //{
+            //    new Parametrizacion() { TipoVehiculo=TipoVehiculo.Carro,ValorHora=1000,ValorDia=8000, Capacidad = 20,PicoPlacaLunes ="1,2",PicoPlacaMartes="3,4", PicoPlacaMiercoles = "5,6",PicoPlacaJueves="7,8",PicoPlacaViernes="9,0" },
+            //    new Parametrizacion() { TipoVehiculo=TipoVehiculo.Moto,ValorHora=500,Capacidad = 10, PicoPlacaLunes ="1,2,3,4",PicoPlacaMartes="5,6,7,8", PicoPlacaMiercoles = "9,0,1,2",PicoPlacaJueves="3,4,5,6",PicoPlacaViernes="7,8,9,0",CilindrajeSobrecargo=500,ValorSobrecargo=200,HorasDia=9 }
+            // };
+            _genericRepoParametrizacion.GetOneAsync(Arg.Any<Expression<Func<Parametrizacion, bool>>>()).Returns(Task.FromResult(ParamCarro));
         }
 
         private void ConfiguracionListadoVehiculos()

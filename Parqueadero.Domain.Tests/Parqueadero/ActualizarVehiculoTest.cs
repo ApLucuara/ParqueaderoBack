@@ -44,22 +44,14 @@ namespace Parqueadero.Domain.Tests.Parqueadero
 
         private void ConfiguracionVehiculo()
         {
-          //  IEnumerable<Entities.Parqueadero> ListaVehiculos = new List<Entities.Parqueadero>();
             var vehiculo = new Entities.Parqueadero(Enumerations.TipoVehiculo.Carro, "ABC123", null, new DateTime(2023, 04, 03, 07, 00, 00));
-          //  ((List<Entities.Parqueadero>)ListaVehiculos).Add(vehiculo);
             _genericRepoParqueadero.GetOneAsync(Arg.Any<Expression<Func<Entities.Parqueadero, bool>>>()).Returns(Task.FromResult(vehiculo));
         }
 
         private void ConfiguracionParametros()
         {
-            IEnumerable<Parametrizacion> Lista = new List<Parametrizacion>()
-            {
-                new Parametrizacion() { TipoVehiculo=TipoVehiculo.Carro,ValorHora=1000,ValorDia=8000, Capacidad = 20,PicoPlacaLunes ="1,2",PicoPlacaMartes="3,4", PicoPlacaMiercoles = "5,6",PicoPlacaJueves="7,8",PicoPlacaViernes="9,0" },
-                new Parametrizacion() { TipoVehiculo=TipoVehiculo.Moto,ValorHora=500,Capacidad = 10, PicoPlacaLunes ="1,2,3,4",PicoPlacaMartes="5,6,7,8", PicoPlacaMiercoles = "9,0,1,2",PicoPlacaJueves="3,4,5,6",PicoPlacaViernes="7,8,9,0",CilindrajeSobrecargo=500,ValorSobrecargo=200,HorasDia=9 }
-             };
-
-            _genericRepoParametrizacion.GetManyAsync(Arg.Any<Expression<Func<Parametrizacion, bool>>>()).Returns(
-                Task.FromResult(Lista));
+            var Parametrizacion = new Parametrizacion { TipoVehiculo = TipoVehiculo.Carro, ValorHora = 1000, ValorDia = 8000, Capacidad = 20, PicoPlacaLunes = "1,2", PicoPlacaMartes = "3,4", PicoPlacaMiercoles = "5,6", PicoPlacaJueves = "7,8", PicoPlacaViernes = "9,0" };
+            _genericRepoParametrizacion.GetOneAsync(Arg.Any<Expression<Func<Parametrizacion, bool>>>()).Returns(Task.FromResult(Parametrizacion));
         }
 
     }
